@@ -1,0 +1,32 @@
+name: Raspberry Pi Docker Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: docker build -t yeelight-controller:latest .
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Copy Docker Compose file
+      run: |
+        sudo cp docker-compose.yml /home/yeelight-controller/programroot/docker-compose.yml
+
+    - name: Set up Docker Compose
+      run: |
+        sudo docker-compose down
+        sudo docker-compose up -d --remove-orphans
+      working-directory: /home/yeelight-controller/programroot

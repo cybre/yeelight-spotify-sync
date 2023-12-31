@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  yeelight-controller:
+    image: yeelight-controller:latest
+    env_file:
+      - variables.env
+    volumes:
+      - type: bind
+        source: ./database
+        target: /app/database
+      - type: bind
+        source: ./homekitdb
+        target: /app/homekitdb
+    network_mode: host
